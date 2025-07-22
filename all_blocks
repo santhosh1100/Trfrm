@@ -1,0 +1,71 @@
+#######################################
+# Terraform Backend Configuration
+#######################################
+
+terraform {
+  backend "s3" {
+    bucket = "statefilestorage8781"
+    key    = "mystatefolder2/terraform.tfstate"
+    region = "us-west-1"
+  }
+}
+
+#######################################
+# Provider Configuration
+#######################################
+
+provider "aws" {
+  region  = "us-west-1"
+  profile = "default"
+}
+
+#######################################
+# Variables
+#######################################
+
+variable "myamiid" {
+  description = "AMI ID to use for the instance"
+  type        = string
+  default     = "ami-01707ae9e637f2048"
+}
+
+variable "myinstype" {
+  description = "Instance type to launch"
+  type        = string
+  default     = "t2.medium"
+}
+
+variable "mykeyname" {
+  description = "SSH key name for the instance"
+  type        = string
+  default     = "insta_key"
+}
+
+variable "myaz" {
+  description = "Availability zone for the instance"
+  type        = string
+  default     = "us-west-1a"
+}
+
+#######################################
+# EC2 Instance Resource
+#######################################
+
+resource "aws_instance" "instance2" {
+  ami               = var.myamiid
+  instance_type     = var.myinstype
+  key_name          = var.mykeyname
+  availability_zone = var.myaz
+
+  tags = {
+    Name = "instance22"
+  }
+}
+
+#######################################
+# Output
+#######################################
+
+output "instance-id" {
+  value = aws_instance.instance2.id
+}
